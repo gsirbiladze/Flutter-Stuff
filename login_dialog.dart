@@ -1,123 +1,89 @@
 import 'package:flutter/material.dart';
 
-class LoginDialog extends StatelessWidget{
+
+class LoginDialog extends StatefulWidget{
   LoginDialog({
     Key key,
     this.color = Colors.blue,
     this.borderWidth = 2,
-    this.borderRoudness = 15,
-    this.alertDialogStile = true,
+    this.borderRoudness = 15, 
+    this.title,
   }):super(key:key);
-
-  final bool alertDialogStile;
 
   final Color  color;
   final double borderWidth;
   final double borderRoudness;
+  final String title;
 
   @override
-  Widget build(BuildContext context) {
-
-    var uCtl = TextEditingController();
-    var pCtl = TextEditingController();
-
-    return alertDialogStile
-      ?AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRoudness)),
-        content: Container(
-          child: _ActiveElements(color: color, borderWidth: borderWidth, borderRoudness: borderRoudness, uCtl: uCtl, pCtl: pCtl),
-        ),
-      )
-      :Scaffold(
-        body: Padding(
-          padding: EdgeInsets.all(borderRoudness),
-          child: Center(
-            child: _ActiveElements(color: color, borderWidth: borderWidth, borderRoudness: borderRoudness, uCtl: uCtl, pCtl: pCtl),
-          )
-        )
-      );
-  }
+  State<StatefulWidget> createState() => _LoginDialog();  
 }
 
-class _ActiveElements extends StatelessWidget {
-  const _ActiveElements({
-    Key key,
-    @required this.color,
-    @required this.borderWidth,
-    @required this.borderRoudness,
-    @required this.uCtl,
-    @required this.pCtl,
-  }) : super(key: key);
+class _LoginDialog extends State<LoginDialog>{
 
-  final Color color;
-  final double borderWidth;
-  final double borderRoudness;
-  final TextEditingController uCtl;
-  final TextEditingController pCtl;
+  final TextEditingController usernameCtl = TextEditingController();
+  final TextEditingController passwordCtl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-            TextField(
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(10),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: color, width: borderWidth),
-                  borderRadius: BorderRadius.all(Radius.circular(borderRoudness)),
-                ),
-                labelText: 'Username',
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: color, width: borderWidth),
-                  borderRadius: BorderRadius.all(Radius.circular(borderRoudness)),
-                ),
+
+    return SimpleDialog(
+      contentPadding: EdgeInsets.all(15),
+      shape: borderUniformShape(), 
+      title: widget.title!=null?Text(widget.title):null,
+      children: <Widget>[
+          TextField(
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(10),
+              enabledBorder: borderUniformShape(),
+              labelText: 'Username',
+              border: borderUniformShape(),
+            ),
+            controller: usernameCtl,
+          ),
+          spaceInBetween(),
+          TextField(
+            obscureText: true,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(10),
+              enabledBorder: borderUniformShape(),
+              labelText: 'Password',
+              border: borderUniformShape(),
+            ),
+            controller: passwordCtl,
+          ),
+          spaceInBetween(),
+          Row(
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              FlatButton(
+                color: widget.color,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.borderRoudness)),
+                child: Text('Cancel'),
+                onPressed: ()=> Navigator.pop(context),
               ),
-              controller: uCtl,
-            ),
-            Placeholder(
-              color: Colors.transparent,
-              fallbackHeight: borderRoudness,
-            ),
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(10),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: color, width: borderWidth),
-                  borderRadius: BorderRadius.all(Radius.circular(borderRoudness)),
-                ),
-                labelText: 'Password',
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: color, width: borderWidth),
-                  borderRadius: BorderRadius.all(Radius.circular(borderRoudness)),
-                ),
+              FlatButton(
+                color: widget.color,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(widget.borderRoudness)),
+                child: Text('Login'),
+                onPressed: ()=> Navigator.pop(context, {"username": usernameCtl.text, "password": passwordCtl.text}),
               ),
-              controller: pCtl,
-            ),
-            Placeholder(
-              color: Colors.transparent,
-              fallbackHeight: borderRoudness,
-            ),
-            Row(
-              // crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FlatButton(
-                  color: color,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRoudness)),
-                  child: Text('Cancel'),
-                  onPressed: ()=>Navigator.pop(context),
-                ),
-                FlatButton(
-                  color: color,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRoudness)),
-                  child: Text('Login'),
-                  onPressed: ()=>Navigator.pop(context, {"username": uCtl.text, "password": pCtl.text}),
-                ),
-              ],
-            ),
-        ],
+            ],
+          ),
+      ],
     );
   }
+
+  spaceInBetween() => Placeholder(
+    color: Colors.transparent,
+    fallbackHeight: widget.borderRoudness,
+  );
+
+  borderUniformShape() => OutlineInputBorder(
+    borderSide: BorderSide(color: widget.color, width: widget.borderWidth),
+    borderRadius: BorderRadius.all(Radius.circular(widget.borderRoudness)),
+  );
+
+
 }
